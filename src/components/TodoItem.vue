@@ -1,43 +1,90 @@
 <template>
-    <div class="todo-item" v-bind:class="{'is-complete':todo.completed}">
-        <p>
-            <input type="checkbox" v-on:change="markComplete">
-            {{todo.title}}
-            <button @click="$emit('del-todo', todo.id)" class="del">X</button>
-        </p>
+    <div class="todo-item">
+        <div class="todo-item-left">
+            <input type="checkbox" v-model="completed" @change="doneEdit">
+            <div v-if="!editing" @dblclick="editTodo" class="todo-item-label" :class="{ completed : completed}">{{ title }}</div>
+            <input v-else class="todo-item-edit" type="text" v-model="title" @blur="doneEdit" @keyup.enter="doneEdit" @keyup.esc="cancelEdit" v-focus>
+        </div>
+        <div class="remove-item" @click="removeTodo(index)">
+            &times;
+        </div>
     </div>
 </template>
 
 <script>
 export default {
-    name: "TodoItem",
-    props: ["todo"],
-    methods: {
-        markComplete() {
-            this.todo.completed = !this.todo.completed
+    name: "todo-item",
+    props: {
+        todo: {
+            type: Object,
+            required: true,
+        },
+        index: { 
+            type: Number,
+            required: true
+        },
+        checkAll: {
+            type: Boolean,
+            required: true
         }
+    },
+    data() {
+        return {
+            'id': this.todo.id,
+            'title': this.todo.title,
+            'completed': this.todo.completed,
+            'editing': this.todo.editing,
+            'beforeEditCache': '',
+        }
+    },
+    watch: {
+        checkAll() {
+            // if (this.checkAll) {
+            //     this.completed = true
+            // } else {
+            //     this.completed = this.todo.completed
+            // }
+            this.completed = this.checkAll ? true : this.todo.completed
+        }
+    },
+        directives: {
+        focus: {
+            inserted: function (el) {
+                el.focus()
+            }
+        }
+    },
+    methods: {
+        removeTodo(index) {
+            this.$emit('removedTodo', index)
+        },
+        editTodo() {
+            this.beforeEditCache = this.title
+            this.editing = true;
+        },
+        doneEdit() {
+            if (this.title.trim() == '') {
+                this.title = this.beforeEditCache
+            }
+            this.editing = false
+
+            this.$emit('finishedEdit', {
+                'index': this.index,
+                'todo' : {
+                    'id': this.id,
+                    'title': this.title,
+                    'completed': this.completed,
+                    'editing': this.editing,
+                }
+            })
+        },
+        cancelEdit() {
+            this.editing = false;
+            this.title = this.beforeEditCache
+        },
     }
 }
 </script>
 
-<style scoped>
-    .todo-item {
-        background: #f4f4f4;
-        padding: 10px;
-        border-bottom: 1px #ccc dotted,
-    }
-
-    .is-complete {
-        text-decoration: line-through;
-    }
-
-    .del {
-        background: #ff0000;
-        color: #fff;
-        border: none;
-        padding: 5px 9px;
-        border-radius: 50%;
-        cursor: pointer;
-        float: right;
-    }
+<style>
 </style>

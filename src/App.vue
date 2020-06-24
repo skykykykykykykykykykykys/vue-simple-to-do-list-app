@@ -1,25 +1,26 @@
 <template>
-  <div id="app">
-    <Header />
-    <AddTodo v-on:add-todo="addTodo"/>
-    <Todos v-bind:todos="todos" v-on:del-todo="deleteTodo"/>
+  <div id="app" class='container'>
+    <img src="./assets/logo.png" class="logo">
+
+    <todo-list></todo-list>
   </div>
 </template>
 
 <script>
-import Header from './components/layout/Header';
-import Todos from './components/Todos';
-import AddTodo from './components/AddTodo';
-import axios from 'axios';
+//import Header from './components/layout/Header';
+//import Todos from './components/Todos';
+//import AddTodo from './components/AddTodo';
+
+import TodoList from './components/TodoList';
+//import axios from 'axios';
 
 
 export default {
   name: 'App',
   components: {
-    Header,
-    Todos,
-    AddTodo
+    TodoList
   },
+  /*
   data() {
     return {
         todos: []
@@ -38,6 +39,7 @@ export default {
       })
         .then(res => this.todos = [...this.todos, res.data])
         .catch(err => console.log(err)); 
+      console.log("adding Todo success")
     }
   },
   created() {
@@ -45,27 +47,31 @@ export default {
       .then(res => this.todos = res.data)
       .catch(err => console.log(err));
   }
+  */
 }
 </script>
 
 <style>
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-  }
-  .btn {
-    display: inline-block;
-    border: none;
-    background: #555;
-    color: #fff;
-    padding: 7px 20px;
-    cursor: pointer;
-  }
 
-  .btn:hover {
-    background: #666;
-  }
+* {
+  box-sizing: border-box;
+}
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* text-align: center; */
+  color: #2c3e50;
+  margin-top: 60px;
+  font-size: 24px;
+}
+.logo {
+  display: block;
+  margin: 20px auto;
+  height: 75px;
+}
 </style>

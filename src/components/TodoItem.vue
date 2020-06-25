@@ -5,7 +5,7 @@
             <div v-if="!editing" @dblclick="editTodo" class="todo-item-label" :class="{ completed : completed}">{{ title }}</div>
             <input v-else class="todo-item-edit" type="text" v-model="title" @blur="doneEdit" @keyup.enter="doneEdit" @keyup.esc="cancelEdit" v-focus>
         </div>
-        <div class="remove-item" @click="removeTodo(index)">
+        <div class="remove-item" @click="removeTodo(id)">
             &times;
         </div>
     </div>
@@ -39,11 +39,6 @@ export default {
     },
     watch: {
         checkAll() {
-            // if (this.checkAll) {
-            //     this.completed = true
-            // } else {
-            //     this.completed = this.todo.completed
-            // }
             this.completed = this.checkAll ? true : this.todo.completed
         }
     },
@@ -55,8 +50,8 @@ export default {
         }
     },
     methods: {
-        removeTodo(index) {
-            this.$emit('removedTodo', index)
+        removeTodo(id) {
+            this.$store.dispatch('deleteTodo', id)
         },
         editTodo() {
             this.beforeEditCache = this.title
@@ -67,15 +62,11 @@ export default {
                 this.title = this.beforeEditCache
             }
             this.editing = false
-
-            this.$emit('finishedEdit', {
-                'index': this.index,
-                'todo' : {
-                    'id': this.id,
-                    'title': this.title,
-                    'completed': this.completed,
-                    'editing': this.editing,
-                }
+            this.$store.dispatch('updateTodo', {
+                'id': this.id,
+                'title': this.title,
+                'completed': this.completed,
+                'editing': this.editing,
             })
         },
         cancelEdit() {
